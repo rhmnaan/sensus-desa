@@ -2,31 +2,35 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+/**
+ * Tabel: users (dibuat lewat sensus_desa.sql, bukan migration Laravel).
+ * Kolom: id, nama, username, password, role, no_hp, is_active, created_at, updated_at
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    protected $table = 'users';
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $fillable = ['nama', 'username', 'password', 'role', 'no_hp', 'is_active'];
+
+    protected $hidden = ['password'];
+
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'  => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function canonicalRole(): ?string
+    {
+        return match (strtolower(trim((string) $this->role))) {
+            'admin', 'administrator' => 'admin',
+            'petugas', 'petugas lapangan', 'petugas_lapangan' => 'petugas',
+            'pimpinan', 'pimpinan desa', 'pimpinan_desa' => 'pimpinan',
+            default => null,
+        };
     }
 }

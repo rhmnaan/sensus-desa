@@ -213,6 +213,12 @@
         grid-template-columns: repeat(4, 1fr)
     }
 
+    .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px
+    }
+
     .grid-2 {
         grid-template-columns: 1fr 1fr
     }
@@ -338,14 +344,220 @@
         display: none
     }
 
+    /* ===== FORM, LANGKAH, PENCARIAN (dipakai halaman petugas) ===== */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px
+    }
+
+    .form-grid.dua {
+        grid-template-columns: repeat(2, 1fr)
+    }
+
+    .field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 5px
+    }
+
+    .field input,
+    .field select,
+    .field textarea,
+    .cari input,
+    .cari select {
+        width: 100%;
+        padding: 9px 11px;
+        border: 1px solid var(--garis);
+        border-radius: 8px;
+        font: inherit;
+        background: #fff
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+        outline: 2px solid var(--hijau);
+        border-color: transparent
+    }
+
+    .field.lebar {
+        grid-column: 1/-1
+    }
+
+    .centang {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        padding-top: 26px
+    }
+
+    .centang label {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        font-weight: 400;
+        margin: 0
+    }
+
+    .centang input {
+        width: auto
+    }
+
+    .kartu-sub {
+        border: 1px solid var(--garis);
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+        background: #fafcfb
+    }
+
+    .kartu-sub .kepala {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 14px
+    }
+
+    .btn-bahaya {
+        background: var(--bahaya-bg);
+        color: var(--bahaya)
+    }
+
+    .btn-kecil {
+        padding: 5px 10px;
+        font-size: 13px
+    }
+
+    .langkah {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 16px;
+        flex-wrap: wrap
+    }
+
+    .langkah button {
+        flex: 1;
+        min-width: 120px;
+        padding: 10px;
+        border: 1px solid var(--garis);
+        border-radius: 8px;
+        background: #fff;
+        font: inherit;
+        cursor: pointer;
+        color: var(--abu)
+    }
+
+    .langkah button.aktif {
+        background: var(--hijau);
+        border-color: var(--hijau);
+        color: #fff;
+        font-weight: 600
+    }
+
+    .panel {
+        display: none
+    }
+
+    .panel.tampil {
+        display: block
+    }
+
+    .aksi-bar {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 18px
+    }
+
+    .cari {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap
+    }
+
+    .cari input {
+        flex: 2;
+        min-width: 200px
+    }
+
+    .cari select {
+        flex: 1;
+        min-width: 140px
+    }
+
+    .tabel-geser {
+        overflow-x: auto
+    }
+
+    .ket-kecil {
+        color: var(--abu);
+        font-size: 12px
+    }
+
+    .status-koneksi {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap
+    }
+
+    .lampu {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--ok)
+    }
+
+    .lampu.mati {
+        background: var(--bahaya)
+    }
+
+    .judul-halaman {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap
+    }
+
     /* ===== HP DAN TABLET ===== */
     @media (max-width:1000px) {
         .grid-4 {
             grid-template-columns: repeat(2, 1fr)
         }
 
+        .grid-3 {
+            grid-template-columns: repeat(2, 1fr)
+        }
+
         .grid-2 {
             grid-template-columns: 1fr
+        }
+
+        .form-grid {
+            grid-template-columns: repeat(2, 1fr)
+        }
+    }
+
+    @media (max-width:640px) {
+
+        .grid-3 {
+            grid-template-columns: 1fr
+        }
+
+        .form-grid,
+        .form-grid.dua {
+            grid-template-columns: 1fr
+        }
+
+        .aksi-bar {
+            flex-direction: column
         }
     }
 
@@ -387,8 +599,8 @@
 <body>
 
     @php
-    // Peran dikirim dari routes/web.php. Kalau tidak ada, anggap admin.
-    $role = $role ?? 'admin';
+    // Ikuti peran akun yang sedang login agar menu sesuai dengan hak akses.
+    $role = $role ?? auth()->user()?->canonicalRole() ?? 'admin';
 
     // ===== DAFTAR MENU PER PERAN (ubah/tambah menu cukup di sini) =====
     $semuaMenu = [
@@ -398,6 +610,7 @@
     ['nama' => 'Wilayah', 'url' => '/admin/wilayah'],
     ['nama' => 'Periode Sensus', 'url' => '/admin/periode'],
     ['nama' => 'Data Master', 'url' => '/admin/master'],
+    ['nama' => 'Penilaian', 'url' => '/admin/penilaian'],
     ['nama' => 'Konflik Sinkronisasi', 'url' => '/admin/konflik'],
     ['nama' => 'Monitor Replikasi', 'url' => '/admin/replikasi'],
     ],
@@ -405,6 +618,7 @@
     ['nama' => 'Dashboard', 'url' => '/petugas/dashboard'],
     ['nama' => 'Daftar Keluarga', 'url' => '/petugas/keluarga'],
     ['nama' => 'Tambah Keluarga', 'url' => '/petugas/keluarga/tambah'],
+    ['nama' => 'Form Pendataan', 'url' => '/petugas/pendataan'],
     ['nama' => 'Status Sinkron', 'url' => '/petugas/sinkron'],
     ],
     'pimpinan' => [
@@ -417,7 +631,7 @@
     $menus = $semuaMenu[$role];
 
     $labelPeran = ['admin' => 'Administrator', 'petugas' => 'Petugas Lapangan', 'pimpinan' => 'Pimpinan'][$role];
-    $namaUser = ['admin' => 'Admin Desa', 'petugas' => 'Petugas 1', 'pimpinan' => 'Pimpinan Desa'][$role];
+    $namaUser = auth()->user()?->nama ?? ['admin' => 'Admin Desa', 'petugas' => 'Petugas 1', 'pimpinan' => 'Pimpinan Desa'][$role];
     $inisial = strtoupper(substr($namaUser, 0, 1));
     @endphp
 
@@ -440,7 +654,7 @@
                 @endforeach
             </nav>
 
-            <div class="sidebar-bawah">Mode tampilan (data contoh)</div>
+            <div class="sidebar-bawah">Mode tampilan</div>
         </aside>
 
         <div class="utama">

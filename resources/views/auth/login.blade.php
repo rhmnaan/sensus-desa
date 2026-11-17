@@ -151,8 +151,9 @@
         </form>
 
         <div class="petunjuk">
-            <b>Mode tampilan:</b> isi username <b>admin</b>, <b>petugas</b>, atau <b>pimpinan</b>.
-            Password bebas, belum diperiksa sampai tahap login sungguhan dibuat.
+            Gunakan username dan password akun aktif yang terdaftar di sistem. Tidak ada password
+            demo atau password default. Jika belum memiliki akses atau lupa password, hubungi
+            administrator.
         </div>
     </div>
 </body>

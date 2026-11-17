@@ -1,60 +1,90 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Admin\DataMasterController;
+use App\Http\Controllers\Admin\PenggunaController;
+use App\Http\Controllers\Admin\PenilaianController;
+use App\Http\Controllers\Admin\PeriodeController;
+use App\Http\Controllers\Admin\WilayahController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Petugas\DashboardController as PetugasDashboard;
+use App\Http\Controllers\Petugas\KeluargaController as PetugasKeluarga;
+use App\Http\Controllers\Petugas\PendataanController as PetugasPendataan;
+use App\Http\Controllers\Petugas\SinkronController as PetugasSinkron;
+use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboard;
+use App\Http\Controllers\Pimpinan\LaporanController as PimpinanLaporan;
+use App\Http\Controllers\Pimpinan\LayakBantuanController as PimpinanLayakBantuan;
+use App\Http\Controllers\Pimpinan\StatistikController as PimpinanStatistik;
+use App\Http\Middleware\PeranMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| DAFTAR ALAMAT HALAMAN (TAHAP TAMPILAN)
+| DAFTAR ALAMAT HALAMAN
 |--------------------------------------------------------------------------
-| Route::view(alamat, nama_file_view, data_yang_dikirim)
-| Nama file view ditulis tanpa ".blade.php" dan memakai titik sebagai folder.
-| Contoh: 'admin.dashboard' = resources/views/admin/dashboard.blade.php
-|
-| Menu yang halamannya belum dibuat memakai view 'placeholder' dulu.
-| Kalau halaman aslinya sudah ada, ganti 'placeholder' dengan nama view-nya.
+| Route::get(alamat, [NamaController::class, 'namaMetode'])  = halaman dengan data dari database
+| Route::view(alamat, 'nama.view')                           = halaman tampilan saja (belum ada data)
+| 'auth' memastikan pengguna sudah login, PeranMiddleware membatasi menurut peran.
 */
 
-// Alamat awal langsung diarahkan ke halaman login
 Route::redirect('/', '/login');
 
 // ===== LOGIN dan LOGOUT =====
-Route::view('/login', 'auth.login');
-
-// SEMENTARA: belum memeriksa password dan database.
-// Hanya mengarahkan sesuai username, supaya tampilan tiap peran bisa dilihat.
-Route::post('/login', function (Request $request) {
-    $username = strtolower(trim($request->input('username', '')));
-
-    return match ($username) {
-        'admin'    => redirect('/admin/dashboard'),
-        'petugas'  => redirect('/petugas/dashboard'),
-        'pimpinan' => redirect('/pimpinan/dashboard'),
-        default    => back()
-            ->withErrors(['username' => 'Untuk tahap tampilan, isi username: admin, petugas, atau pimpinan.'])
-            ->withInput(),
-    };
-});
-
-Route::post('/logout', fn () => redirect('/login'));
+Route::get('/login', [AuthController::class, 'form'])->name('login');
+Route::post('/login', [AuthController::class, 'masuk']);
+Route::post('/logout', [AuthController::class, 'keluar']);
 
 // ===== ADMIN =====
-Route::view('/admin/dashboard', 'admin.dashboard',    ['role' => 'admin']);
-Route::view('/admin/pengguna',  'placeholder',        ['role' => 'admin', 'judul' => 'Pengguna']);
-Route::view('/admin/wilayah',   'placeholder',        ['role' => 'admin', 'judul' => 'Wilayah']);
-Route::view('/admin/periode',   'placeholder',        ['role' => 'admin', 'judul' => 'Periode Sensus']);
-Route::view('/admin/master',    'placeholder',        ['role' => 'admin', 'judul' => 'Data Master']);
-Route::view('/admin/konflik',   'placeholder',        ['role' => 'admin', 'judul' => 'Konflik Sinkronisasi']);
-Route::view('/admin/replikasi', 'placeholder',        ['role' => 'admin', 'judul' => 'Monitor Replikasi']);
+Route::middleware(['auth', PeranMiddleware::class.':admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminDashboard::class, 'index']);
+    Route::get('/pengguna', [PenggunaController::class, 'index']);
+    Route::post('/pengguna', [PenggunaController::class, 'store']);
+    Route::put('/pengguna/{user}', [PenggunaController::class, 'update']);
+    Route::patch('/pengguna/{user}/aktif', [PenggunaController::class, 'toggleAktif']);
+    Route::put('/pengguna/{user}/password', [PenggunaController::class, 'resetPassword']);
+    Route::get('/wilayah', [WilayahController::class, 'index']);
+    Route::post('/wilayah/dusun', [WilayahController::class, 'storeDusun']);
+    Route::put('/wilayah/dusun/{dusun}', [WilayahController::class, 'updateDusun']);
+    Route::delete('/wilayah/dusun/{dusun}', [WilayahController::class, 'deleteDusun']);
+    Route::post('/wilayah/rw', [WilayahController::class, 'storeRw']);
+    Route::put('/wilayah/rw/{rw}', [WilayahController::class, 'updateRw']);
+    Route::delete('/wilayah/rw/{rw}', [WilayahController::class, 'deleteRw']);
+    Route::post('/wilayah/rt', [WilayahController::class, 'storeRt']);
+    Route::put('/wilayah/rt/{rt}', [WilayahController::class, 'updateRt']);
+    Route::delete('/wilayah/rt/{rt}', [WilayahController::class, 'deleteRt']);
+    Route::get('/periode', [PeriodeController::class, 'index']);
+    Route::post('/periode', [PeriodeController::class, 'store']);
+    Route::put('/periode/{periode}', [PeriodeController::class, 'update']);
+    Route::get('/master', [DataMasterController::class, 'index']);
+    Route::post('/master/{jenis}', [DataMasterController::class, 'store']);
+    Route::put('/master/{jenis}/{id}', [DataMasterController::class, 'update']);
+    Route::delete('/master/{jenis}/{id}', [DataMasterController::class, 'destroy']);
+    Route::get('/penilaian', [PenilaianController::class, 'index']);
+    Route::view('/konflik', 'placeholder', ['judul' => 'Konflik Sinkronisasi']);
+    Route::view('/replikasi', 'placeholder', ['judul' => 'Monitor Replikasi']);
+});
 
 // ===== PETUGAS =====
-Route::view('/petugas/dashboard',       'placeholder', ['role' => 'petugas', 'judul' => 'Dashboard Petugas']);
-Route::view('/petugas/keluarga',        'placeholder', ['role' => 'petugas', 'judul' => 'Daftar Keluarga']);
-Route::view('/petugas/keluarga/tambah', 'placeholder', ['role' => 'petugas', 'judul' => 'Tambah Keluarga']);
-Route::view('/petugas/sinkron',         'placeholder', ['role' => 'petugas', 'judul' => 'Status Sinkron']);
+Route::middleware(['auth', PeranMiddleware::class.':petugas'])->prefix('petugas')->group(function () {
+    Route::get('/dashboard', [PetugasDashboard::class, 'index']);
+    Route::get('/keluarga', [PetugasKeluarga::class, 'index']);
+    Route::get('/keluarga/tambah', [PetugasKeluarga::class, 'create']);
+    Route::post('/keluarga/tambah', [PetugasKeluarga::class, 'store']);
+    Route::get('/keluarga/{keluarga}/ubah', [PetugasKeluarga::class, 'edit']);
+    Route::put('/keluarga/{keluarga}', [PetugasKeluarga::class, 'update']);
+    Route::get('/keluarga/{keluarga}', [PetugasKeluarga::class, 'show']);
+    Route::get('/pendataan', [PetugasPendataan::class, 'create']);
+    Route::post('/pendataan', [PetugasPendataan::class, 'store']);
+    Route::get('/sinkron', [PetugasSinkron::class, 'index']);
+    Route::post('/sinkron', [PetugasSinkron::class, 'jalankan']);
+});
 
 // ===== PIMPINAN =====
-Route::view('/pimpinan/dashboard',     'placeholder', ['role' => 'pimpinan', 'judul' => 'Dashboard Pimpinan']);
-Route::view('/pimpinan/statistik',     'placeholder', ['role' => 'pimpinan', 'judul' => 'Statistik']);
-Route::view('/pimpinan/layak-bantuan', 'placeholder', ['role' => 'pimpinan', 'judul' => 'Layak Bantuan']);
-Route::view('/pimpinan/laporan',       'placeholder', ['role' => 'pimpinan', 'judul' => 'Laporan']);
+Route::middleware(['auth', PeranMiddleware::class.':pimpinan'])->prefix('pimpinan')->group(function () {
+    Route::get('/dashboard', [PimpinanDashboard::class, 'index']);
+    Route::get('/statistik', [PimpinanStatistik::class, 'index']);
+    Route::get('/layak-bantuan', [PimpinanLayakBantuan::class, 'index']);
+    Route::get('/layak-bantuan/{pendataan}', [PimpinanLayakBantuan::class, 'show']);
+    Route::get('/laporan', [PimpinanLaporan::class, 'index']);
+    Route::get('/laporan/ekspor', [PimpinanLaporan::class, 'ekspor']);
+});

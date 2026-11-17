@@ -4,33 +4,20 @@
 
 @section('isi')
 @php
-// ===== DATA CONTOH =====
-// Nanti bagian ini diganti dengan data dari database (lewat Controller).
-$statistik = [
-['label' => 'Total Keluarga', 'nilai' => 320, 'ket' => 'terdaftar di sistem'],
-['label' => 'Sudah Didata', 'nilai' => 214, 'ket' => 'periode 2026'],
-['label' => 'Belum Didata', 'nilai' => 106, 'ket' => 'masih perlu didatangi'],
-['label' => 'Konflik Menunggu', 'nilai' => 3, 'ket' => 'perlu ditinjau admin'],
+$warnaStatus = [
+    'Berhasil' => 'b-ok',
+    'Gagal' => 'b-bahaya',
+    'Menunggu' => 'b-warn',
+    'Berjalan' => 'b-warn',
+    'Mencoba ulang' => 'b-warn',
+    'Mulai' => 'b-warn',
+    'Tidak diketahui' => 'b-warn',
 ];
-
-$dusun = [
-['nama' => 'Dusun A', 'persen' => 78],
-['nama' => 'Dusun B', 'persen' => 64],
-['nama' => 'Dusun C', 'persen' => 52],
-['nama' => 'Dusun D', 'persen' => 31],
-];
-
-$sinkron = [
-['waktu' => '28 Okt 2026 10:15', 'perangkat' => 'SERVER-LAPANGAN', 'jenis' => 'Merge', 'status' => 'Berhasil'],
-['waktu' => '28 Okt 2026 09:40', 'perangkat' => 'SERVER-LAPANGAN', 'jenis' => 'Merge', 'status' => 'Konflik'],
-['waktu' => '27 Okt 2026 16:05', 'perangkat' => 'SERVER-LAPANGAN', 'jenis' => 'Snapshot', 'status' => 'Berhasil'],
-['waktu' => '27 Okt 2026 08:30', 'perangkat' => 'SERVER-LAPANGAN', 'jenis' => 'Merge', 'status' => 'Gagal'],
-];
-
-$warnaStatus = ['Berhasil' => 'b-ok', 'Konflik' => 'b-warn', 'Gagal' => 'b-bahaya'];
 @endphp
 
-<div class="info">Data pada halaman ini masih contoh. Nanti diganti data asli dari database.</div>
+@if (! $periode)
+    <div class="info">Belum ada periode sensus yang sedang berjalan.</div>
+@endif
 
 <div class="grid grid-4">
     @foreach ($statistik as $s)
@@ -45,32 +32,41 @@ $warnaStatus = ['Berhasil' => 'b-ok', 'Konflik' => 'b-warn', 'Gagal' => 'b-bahay
 <div class="grid grid-2">
     <div class="kartu">
         <h2>Progres pendataan per dusun</h2>
-        @foreach ($dusun as $d)
+        @forelse ($dusun as $d)
         <div class="baris-bar">
-            <div class="judul"><span>{{ $d['nama'] }}</span><span>{{ $d['persen'] }}%</span></div>
-            <div class="bar"><span style="width: {{ $d['persen'] }}%"></span></div>
+            <div class="judul"><span>{{ $d->nama_dusun }}</span><span>{{ $d->persen }}%</span></div>
+            <div class="bar"><span style="width: {{ $d->persen }}%"></span></div>
         </div>
-        @endforeach
+        @empty
+        <p class="ket-kecil">Belum ada data dusun.</p>
+        @endforelse
     </div>
 
     <div class="kartu">
         <h2>Sinkronisasi terakhir</h2>
+        @if (! $sumberSinkronTersedia)
+            <p class="ket-kecil">Database riwayat replikasi belum tersedia.</p>
+        @endif
         <table>
             <thead>
                 <tr>
                     <th>Waktu</th>
-                    <th>Jenis</th>
+                    <th>Publikasi</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($sinkron as $s)
+                @forelse ($sinkron as $s)
                 <tr>
-                    <td>{{ $s['waktu'] }}<br><small style="color:var(--abu)">{{ $s['perangkat'] }}</small></td>
-                    <td>{{ $s['jenis'] }}</td>
+                    <td>{{ $s['waktu'] }}<br><small style="color:var(--abu)">{{ $s['jenis'] }}</small></td>
+                    <td>{{ $s['publikasi'] }}</td>
                     <td><span class="badge {{ $warnaStatus[$s['status']] }}">{{ $s['status'] }}</span></td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="3" class="ket-kecil">Belum ada riwayat sinkronisasi.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
