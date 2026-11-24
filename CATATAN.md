@@ -5,6 +5,9 @@ Di VS Code dengan ekstensi Markdown All in One, tekan `Alt+C` di baris itu.
 
 Legenda: `[x]` selesai, `[ ]` belum. Tulis catatan singkat di belakang tanda `-` kalau ada kendala.
 
+Perubahan IP :
+notepad C:\Windows\System32\drivers\etc\hosts
+
 ## Info cepat (jangan tulis password di sini)
 
 - Laptop 1 (Publisher/Distributor): LAPTOP-SDTHFIOF
@@ -13,9 +16,12 @@ Legenda: `[x]` selesai, `[ ]` belum. Tulis catatan singkat di belakang tanda `-`
 - Replikasi: Snapshot (master), Transactional (periode dan skor), Merge (input petugas)
 - Akun contoh di tabel users: admin, petugas1, petugas2, pimpinan
 
+## ubah ip 
+notepad C:\Windows\System32\drivers\etc\hosts
+
 ### Akun yang dibuat
 
-| Username | Role |
+| Username | Password |
 |---|---|
 | `admin` | admin123 |
 | `petugas1` | petugas123 |

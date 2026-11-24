@@ -611,7 +611,6 @@
     ['nama' => 'Periode Sensus', 'url' => '/admin/periode'],
     ['nama' => 'Data Master', 'url' => '/admin/master'],
     ['nama' => 'Penilaian', 'url' => '/admin/penilaian'],
-    ['nama' => 'Konflik Sinkronisasi', 'url' => '/admin/konflik'],
     ['nama' => 'Monitor Replikasi', 'url' => '/admin/replikasi'],
     ],
     'petugas' => [
@@ -619,7 +618,6 @@
     ['nama' => 'Daftar Keluarga', 'url' => '/petugas/keluarga'],
     ['nama' => 'Tambah Keluarga', 'url' => '/petugas/keluarga/tambah'],
     ['nama' => 'Form Pendataan', 'url' => '/petugas/pendataan'],
-    ['nama' => 'Status Sinkron', 'url' => '/petugas/sinkron'],
     ],
     'pimpinan' => [
     ['nama' => 'Dashboard', 'url' => '/pimpinan/dashboard'],

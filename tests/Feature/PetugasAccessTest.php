@@ -22,7 +22,7 @@ class PetugasAccessTest extends TestCase
             ->assertSee('Daftar Keluarga')
             ->assertSee('Form Pendataan')
             ->assertSee('href="'.url('/petugas/pendataan').'"', false)
-            ->assertSee('Status Sinkron')
+            ->assertDontSee('Status Sinkron')
             ->assertDontSee('Administrator')
             ->assertDontSee('Monitor Replikasi');
     }

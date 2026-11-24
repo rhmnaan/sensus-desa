@@ -4,10 +4,6 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-/**
- * Tabel: users (dibuat lewat sensus_desa.sql, bukan migration Laravel).
- * Kolom: id, nama, username, password, role, no_hp, is_active, created_at, updated_at
- */
 class User extends Authenticatable
 {
     protected $table = 'users';

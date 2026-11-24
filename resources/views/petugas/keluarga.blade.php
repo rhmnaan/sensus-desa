@@ -4,8 +4,6 @@
 
 @section('isi')
 @php($warnaStatus = ['Belum' => 'b-bahaya', 'Terdata' => 'b-ok'])
-@php($labelStatusMerge = $statusMerge === 'konfigurasi_ada' ? 'Merge terkonfigurasi' : 'Merge belum dikonfigurasi')
-@php($warnaStatusMerge = $statusMerge === 'konfigurasi_ada' ? 'b-ok' : 'b-warn')
 
 @if ($errors->any())
     <div class="info">{{ $errors->first() }}</div>
@@ -27,9 +25,6 @@
 </div>
 
 <div class="kartu">
-    <div class="ket-kecil" style="margin-bottom:12px">
-        Badge Merge menunjukkan ketersediaan konfigurasi job sinkronisasi; status per keluarga dilacak oleh SQL Server Merge Replication.
-    </div>
     <form method="GET" action="{{ url('/petugas/keluarga') }}" class="cari">
         <input type="search" name="cari" value="{{ $filters['cari'] }}"
             placeholder="Cari No. KK, NIK, atau nama kepala keluarga">
@@ -60,7 +55,6 @@
                     <th>RT / RW</th>
                     <th>Anggota</th>
                     <th>Pendataan</th>
-                    <th>Status sinkron</th>
                     <th></th>
                 </tr>
             </thead>
@@ -75,7 +69,6 @@
                     <td>RT {{ $k->rt?->no_rt }} / RW {{ $k->rt?->rw?->no_rw }}</td>
                     <td>{{ $k->anggota_count }} orang</td>
                     <td><span class="badge {{ $warnaStatus[$statusPendataan] }}">{{ $statusPendataan }}</span></td>
-                    <td><span class="badge {{ $warnaStatusMerge }}">{{ $labelStatusMerge }}</span></td>
                     <td style="text-align:right">
                         <a class="btn btn-garis btn-kecil" href="{{ url('/petugas/keluarga/'.$k->id) }}">Lihat</a>
                         <a class="btn btn-garis btn-kecil" href="{{ url('/petugas/keluarga/'.$k->id.'/ubah') }}">Ubah</a>
@@ -87,7 +80,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="ket-kecil">Tidak ada keluarga yang cocok dengan pencarian atau filter.</td>
+                    <td colspan="5" class="ket-kecil">Tidak ada keluarga yang cocok dengan pencarian atau filter.</td>
                 </tr>
                 @endforelse
             </tbody>

@@ -154,10 +154,6 @@ class KeluargaController extends Controller
             ->with('rw:id,no_rw')
             ->orderBy('no_rt')
             ->get(['id', 'rw_id', 'no_rt']);
-        $statusMerge = DB::connection()->getDriverName() === 'sqlsrv'
-            && filled(config('replication.merge_sync_job'))
-            ? 'konfigurasi_ada'
-            : 'belum_dikonfigurasi';
 
         return view('petugas.keluarga', [
             'keluarga' => $keluarga,
@@ -169,7 +165,6 @@ class KeluargaController extends Controller
                 'status' => $status,
             ],
             'periode' => $periode,
-            'statusMerge' => $statusMerge,
         ]);
     }
 

@@ -8,6 +8,7 @@ $warnaStatus = [
     'Berhasil' => 'b-ok',
     'Gagal' => 'b-bahaya',
     'Menunggu' => 'b-warn',
+    'Siaga' => 'b-warn',
     'Berjalan' => 'b-warn',
     'Mencoba ulang' => 'b-warn',
     'Mulai' => 'b-warn',

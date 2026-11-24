@@ -5,12 +5,12 @@ use App\Http\Controllers\Admin\DataMasterController;
 use App\Http\Controllers\Admin\PenggunaController;
 use App\Http\Controllers\Admin\PenilaianController;
 use App\Http\Controllers\Admin\PeriodeController;
+use App\Http\Controllers\Admin\ReplikasiController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboard;
 use App\Http\Controllers\Petugas\KeluargaController as PetugasKeluarga;
 use App\Http\Controllers\Petugas\PendataanController as PetugasPendataan;
-use App\Http\Controllers\Petugas\SinkronController as PetugasSinkron;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboard;
 use App\Http\Controllers\Pimpinan\LaporanController as PimpinanLaporan;
 use App\Http\Controllers\Pimpinan\LayakBantuanController as PimpinanLayakBantuan;
@@ -60,8 +60,7 @@ Route::middleware(['auth', PeranMiddleware::class.':admin'])->prefix('admin')->g
     Route::put('/master/{jenis}/{id}', [DataMasterController::class, 'update']);
     Route::delete('/master/{jenis}/{id}', [DataMasterController::class, 'destroy']);
     Route::get('/penilaian', [PenilaianController::class, 'index']);
-    Route::view('/konflik', 'placeholder', ['judul' => 'Konflik Sinkronisasi']);
-    Route::view('/replikasi', 'placeholder', ['judul' => 'Monitor Replikasi']);
+    Route::get('/replikasi', [ReplikasiController::class, 'index']);
 });
 
 // ===== PETUGAS =====
@@ -75,8 +74,6 @@ Route::middleware(['auth', PeranMiddleware::class.':petugas'])->prefix('petugas'
     Route::get('/keluarga/{keluarga}', [PetugasKeluarga::class, 'show']);
     Route::get('/pendataan', [PetugasPendataan::class, 'create']);
     Route::post('/pendataan', [PetugasPendataan::class, 'store']);
-    Route::get('/sinkron', [PetugasSinkron::class, 'index']);
-    Route::post('/sinkron', [PetugasSinkron::class, 'jalankan']);
 });
 
 // ===== PIMPINAN =====

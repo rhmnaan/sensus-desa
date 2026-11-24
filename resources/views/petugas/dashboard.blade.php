@@ -11,7 +11,6 @@
     <span class="lampu {{ $periode ? 'hidup' : 'mati' }}"></span>
     <b>{{ $periode ? 'Periode sensus berjalan' : 'Tidak ada periode aktif' }}</b>
     <span class="ket-kecil">{{ $periode ? $periode->nama.' · '.$periode->tahun : 'Data pendataan belum dihitung untuk periode aktif' }}</span>
-    <a class="btn btn-garis btn-kecil" style="margin-left:auto" href="{{ url('/petugas/sinkron') }}">Lihat sinkron</a>
 </div>
 
 <div class="grid grid-4">

@@ -101,7 +101,9 @@ class KeluargaIndexTest extends TestCase
             ->assertSee('Kepala Belum')
             ->assertSee('Terdata')
             ->assertSee('Belum')
-            ->assertSee('Merge belum dikonfigurasi')
+            ->assertDontSee('Status sinkron')
+            ->assertDontSee('Merge terkonfigurasi')
+            ->assertDontSee('Merge belum dikonfigurasi')
             ->assertSee('Lanjutkan')
             ->assertSee('RT 01 / RW 01')
             ->assertSee('2 keluarga terdaftar')
@@ -120,7 +122,8 @@ class KeluargaIndexTest extends TestCase
             ->assertSee('Dashboard Petugas')
             ->assertSee('Kepala Dashboard')
             ->assertSee('Tambah keluarga')
-            ->assertSee('Daftar keluarga');
+            ->assertSee('Daftar keluarga')
+            ->assertDontSee('Lihat sinkron');
     }
 
     public function test_pendataan_sidebar_destination_shows_family_picker(): void
@@ -342,28 +345,19 @@ class KeluargaIndexTest extends TestCase
         $this->assertDatabaseMissing('keluarga', ['no_kk' => '3333333333333333']);
     }
 
-    public function test_sync_page_shows_database_history_instead_of_sample_records(): void
+    public function test_petugas_sync_page_is_removed(): void
     {
         $response = $this->withoutMiddleware([Authenticate::class, PeranMiddleware::class])->get('/petugas/sinkron');
 
-        $response->assertOk()
-            ->assertSee('Riwayat replikasi belum tersedia')
-            ->assertSee('Menunggu dikirim')
-            ->assertSee('Sinkronisasi berhasil')
-            ->assertSee('Konflik tercatat')
-            ->assertSee('Arti status konflik')
-            ->assertSee('Database riwayat replikasi tidak dapat diakses dari server ini.')
-            ->assertSee('Sinkronkan sekarang')
-            ->assertDontSee('Joko Widodo');
+        $response->assertNotFound();
     }
 
-    public function test_sync_action_reports_when_not_connected_to_sql_server(): void
+    public function test_petugas_sync_action_is_removed(): void
     {
         $response = $this->withoutMiddleware([Authenticate::class, PeranMiddleware::class])
             ->post('/petugas/sinkron');
 
-        $response->assertRedirect()
-            ->assertSessionHasErrors('sinkron');
+        $response->assertNotFound();
     }
 
     /**
