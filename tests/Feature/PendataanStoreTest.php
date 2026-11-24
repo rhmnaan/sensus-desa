@@ -170,16 +170,30 @@ class PendataanStoreTest extends TestCase
             'keluarga_id' => $keluargaId,
             'periode_id' => 1,
         ]);
+        $pendataanId = DB::table('pendataan')
+            ->where('keluarga_id', $keluargaId)
+            ->where('periode_id', 1)
+            ->value('id');
         $this->assertDatabaseHas('data_ekonomi', [
+            'pendataan_id' => $pendataanId,
             'penghasilan_bulanan' => 1000000,
             'jenis_usaha_id' => 1,
         ]);
         $this->assertDatabaseHas('kondisi_rumah', [
+            'pendataan_id' => $pendataanId,
             'status_kepemilikan' => 'milik_sendiri',
             'luas_lantai' => 50,
         ]);
-        $this->assertDatabaseHas('aset_keluarga', ['jenis_aset_id' => 1, 'jumlah' => 2]);
-        $this->assertDatabaseHas('bantuan_sosial', ['jenis_bantuan_id' => 1, 'tahun_terima' => 2026]);
+        $this->assertDatabaseHas('aset_keluarga', [
+            'pendataan_id' => $pendataanId,
+            'jenis_aset_id' => 1,
+            'jumlah' => 2,
+        ]);
+        $this->assertDatabaseHas('bantuan_sosial', [
+            'pendataan_id' => $pendataanId,
+            'jenis_bantuan_id' => 1,
+            'tahun_terima' => 2026,
+        ]);
 
         $payload['penghasilan_bulanan'] = 1750000;
         unset($payload['aset'], $payload['bantuan']);

@@ -14,11 +14,11 @@ use App\Models\KondisiRumah;
 use App\Models\Pendataan;
 use App\Models\PeriodeSensus;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -149,6 +149,10 @@ class PendataanController extends Controller
                 'petugas_id' => auth()->id(),
                 'tgl_pendataan' => now()->toDateString(),
             ])->save();
+            $pendataan = Pendataan::query()
+                ->where('keluarga_id', $keluarga->id)
+                ->where('periode_id', $periode->id)
+                ->firstOrFail();
 
             DataEkonomi::query()->updateOrCreate(
                 ['pendataan_id' => $pendataan->id],

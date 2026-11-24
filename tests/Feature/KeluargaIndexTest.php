@@ -143,7 +143,7 @@ class KeluargaIndexTest extends TestCase
             ->assertSee('Pilih keluarga')
             ->assertSee('Kepala Pilihan')
             ->assertSee('Mulai pendataan')
-        ->assertSee(url('/petugas/pendataan?keluarga_id='.$keluargaId), false);
+            ->assertSee(url('/petugas/pendataan?keluarga_id='.$keluargaId), false);
     }
 
     public function test_family_index_filters_by_nik_rt_and_current_period_status(): void
@@ -219,9 +219,13 @@ class KeluargaIndexTest extends TestCase
             'alamat' => 'Jalan Uji',
             'rt_id' => $wilayah['rt'],
         ]);
+        $keluargaId = DB::table('keluarga')
+            ->where('no_kk', '3333333333333333')
+            ->value('id');
         $this->assertDatabaseHas('anggota_keluarga', [
             'nik' => '4444444444444444',
             'nama' => 'Kepala Baru',
+            'keluarga_id' => $keluargaId,
             'pekerjaan_utama_id' => $pekerjaanId,
             'disabilitas' => true,
         ]);

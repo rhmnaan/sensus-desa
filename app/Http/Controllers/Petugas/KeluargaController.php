@@ -11,8 +11,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -33,6 +33,9 @@ class KeluargaController extends Controller
                 'alamat' => $data['alamat'] ?? null,
                 'rt_id' => $data['rt_id'],
             ]);
+            $keluarga = Keluarga::query()
+                ->where('no_kk', $data['no_kk'])
+                ->firstOrFail();
 
             foreach ($data['anggota'] as $anggota) {
                 $keluarga->anggota()->create([
